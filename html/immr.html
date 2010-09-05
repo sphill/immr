@@ -38,101 +38,27 @@
 			// MMR frame
 			var plot_mmr = panel_mmr.add(pv.Panel)
 				.strokeStyle("#aaa");
-		
-			// 15 panel
-			var ix = 1,
-				iy = 4;
-			var panel_15 = vis.add(pv.Panel)
-				.top(iy*p + (iy-1)*((h-p*4)*(1/4)))
-				.left(ix*p + (ix-1)*((w-p*4)*(1/4)))
-				.height((h-p*4)*(1/4))
-				.width((w-p*4)*(1/4));
 			
-			// 15 frame
-			var plot_15 = panel_15.add(pv.Panel)
-				.strokeStyle("#aaa");
-			
-			// 20 panel
-			var ix = 2,
-				iy = 4;
-			var panel_20 = vis.add(pv.Panel)
-				.top(iy*p + (iy-1)*((h-p*4)*(1/4)))
-				.left(ix*p + (ix-1)*((w-p*4)*(1/4)))
-				.height((h-p*4)*(1/4))
-				.width((w-p*4)*(1/4));
-			
-			// 20 frame
-			var plot_20 = panel_20.add(pv.Panel)
-				.strokeStyle("#aaa");
-			
-			// 25 panel
-			var ix = 3,
-				iy = 4;
-			var panel_25 = vis.add(pv.Panel)
-				.top(iy*p + (iy-1)*((h-p*4)*(1/4)))
-				.left(ix*p + (ix-1)*((w-p*4)*(1/4)))
-				.height((h-p*4)*(1/4))
-				.width((w-p*4)*(1/4));
-			
-			// 25 frame
-			var plot_25 = panel_25.add(pv.Panel)
-				.strokeStyle("#aaa");
-			
-			// 30 panel
-			var ix = 4,
-				iy = 4;
-			var panel_30 = vis.add(pv.Panel)
-				.top(iy*p + (iy-1)*((h-p*4)*(1/4)))
-				.left(ix*p + (ix-1)*((w-p*4)*(1/4)))
-				.height((h-p*4)*(1/4))
-				.width((w-p*4)*(1/4));
-			
-			// 30 frame
-			var plot_30 = panel_30.add(pv.Panel)
-				.strokeStyle("#aaa");
-			
-			// 35 panel
-			var ix = 4,
-				iy = 3;
-			var panel_35 = vis.add(pv.Panel)
-				.top(iy*p + (iy-1)*((h-p*4)*(1/4)))
-				.left(ix*p + (ix-1)*((w-p*4)*(1/4)))
-				.height((h-p*4)*(1/4))
-				.width((w-p*4)*(1/4));
-			
-			// 35 frame
-			var plot_35 = panel_35.add(pv.Panel)
-				.strokeStyle("#aaa");
+			// establish the indexing locations for each age subplot
+			var age_subplots = [
+				{age: 15, ix: 1, iy: 4},
+				{age: 20, ix: 2, iy: 4},
+				{age: 25, ix: 3, iy: 4},
+				{age: 30, ix: 4, iy: 4},
+				{age: 35, ix: 4, iy: 3},
+				{age: 40, ix: 4, iy: 2},
+				{age: 45, ix: 4, iy: 1}
+			]
 
-			// 40 panel
-			var ix = 4,
-				iy = 2;
-			var panel_40 = vis.add(pv.Panel)
-				.top(iy*p + (iy-1)*((h-p*4)*(1/4)))
-				.left(ix*p + (ix-1)*((w-p*4)*(1/4)))
+			// create and frame each subplot
+			var cell = vis.add(pv.Panel)
+				.data(age_subplots)
+				.top(function(d) d.iy*p + (d.iy-1)*((h-p*4)*(1/4)))
+				.left(function(d) d.ix*p + (d.ix-1)*((w-p*4)*(1/4)))
 				.height((h-p*4)*(1/4))
-				.width((w-p*4)*(1/4));
-			
-			// 40 frame
-			var plot_40 = panel_40.add(pv.Panel)
+				.width((w-p*4)*(1/4))
+			  .add(pv.Panel)
 				.strokeStyle("#aaa");
-		
-			// 45 panel
-			var ix = 4,
-				iy = 1;
-			var panel_45 = vis.add(pv.Panel)
-				.top(iy*p + (iy-1)*((h-p*4)*(1/4)))
-				.left(ix*p + (ix-1)*((w-p*4)*(1/4)))
-				.height((h-p*4)*(1/4))
-				.width((w-p*4)*(1/4));
-			
-			// 45 frame
-			var plot_45 = panel_45.add(pv.Panel)
-				.strokeStyle("#aaa");
-		
-		
-		
-		
 		
 		
 		
