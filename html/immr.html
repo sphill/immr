@@ -51,6 +51,15 @@
 				  .anchor("bottom").add(pv.Label)
 					.text(xaxis_mmr.tickFormat);
 			
+			// add a title to the MMR plot
+			var title_mmr = panel_mmr.add(pv.Bar)
+				.height(12)
+				.top(-12)
+				.fillStyle("pink")
+				.strokeStyle("#aaa")
+			  .anchor("center").add(pv.Label)
+				.text("Maternal Mortality Rate per 100,000 live births");
+			
 			// establish the indexing locations for each age subplot
 			var age_subplots = [
 				{age: 15, ix: 1, iy: 4},
@@ -81,6 +90,15 @@
 			  .anchor("bottom").add(pv.Label)
 				.text(xaxis_age.tickFormat);
 		
+			// add titles to each subplot
+			var title_age = cell.add(pv.Bar)
+				.height(12)
+				.top(-12)
+				.fillStyle("pink")
+				.strokeStyle("#aaa")
+			  .anchor("center").add(pv.Label)
+				.text(function(d) "Age " + d.age + " Deaths");
+
 		
 		
 			
