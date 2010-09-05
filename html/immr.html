@@ -15,9 +15,12 @@
 		<script type="text/javascript+protovis">
 		
 			// nest the data
-			var data_by_type = pv.nest(mmr_studies)
-				.key(function(d) d.type)
-				.entries();
+			var obs_by_type = pv.nest(mmr_studies)
+					.key(function(d) d.type)
+					.entries(),
+				est_by_type = pv.nest(mmr_estimates)
+					.key(function(d) d.type)
+					.entries();
 			
 			// overall size
 			var h = 600,
@@ -54,7 +57,7 @@
 				xtick_mmr = panel_mmr.add(pv.Rule)
 					.data(pv.range(1980, 2011, 5))
 					.left(xaxis_mmr)
-					.bottom(0)
+					.bottom(-3)
 					.strokeStyle(function(d) d ? "#eee" : "#000")
 				  .anchor("bottom").add(pv.Label)
 					.text(xaxis_mmr.tickFormat);
@@ -68,6 +71,37 @@
 			  .anchor("center").add(pv.Label)
 				.text("Maternal Mortality Rate per 100,000 live births");
 			
+			
+			
+			max_ys = pv.nest(mmr_estimates.concat(mmr_studies))
+				.key(function(d) d.type)
+				.rollup(function(v) pv.max(v, function(d) d.observed == undefined ? d.upper : d.observed));
+			
+			// get the data for the MMR plot
+			var obs_mmr = obs_by_type.filter(function(d) d.key=='mmr')[0].values,
+				est_mmr = est_by_type.filter(function(d) d.key=='mmr')[0].values,
+				x_obs_mmr = obs_mmr.map(function(d) d.year),
+				y_obs_mmr = obs_mmr.map(function(d) d.observed),
+				x_est_mmr = est_mmr.map(function(d) d.year),
+				y_est_mmr_upper = est_mmr.map(function(d) d.upper),
+				y_est_mmr_lower = est_mmr.map(function(d) d.lower),
+				y_est_mmr_mean = est_mmr.map(function(d) d.mean);
+				
+			
+			// add a y axis to the MMR plot
+			var yaxis_mmr = pv.Scale
+				.linear(0, pv.max(y_est_mmr_upper.concat(y_obs_mmr)))
+				.range(-((h-p*4)-(h-p*6)*(1/4)), (h-p*4)-(h-p*6)*(1/4));
+			var ytick_mmr = panel_mmr.add(pv.Rule)
+				.data(yaxis_mmr.ticks(10))
+				.bottom(yaxis_mmr)
+				.left(-5)
+				.strokeStyle("none")
+			  .anchor("left").add(pv.Label)
+				.text(yaxis_mmr.tickFormat);
+		
+
+
 			// establish the indexing locations for each age subplot
 			var age_subplots = [
 				{age: 15, ix: 1, iy: 4},
@@ -106,6 +140,8 @@
 				.strokeStyle("#aaa")
 			  .anchor("center").add(pv.Label)
 				.text(function(d) "Age " + d.age + " Deaths");
+			
+			
 
 		
 		
