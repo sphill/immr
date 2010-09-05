@@ -22,7 +22,7 @@
 			// overall size
 			var h = 600,
 				w = 1000,
-				p = 30;
+				p = 28;
 		
 			// root panel
 			var vis = new pv.Panel()
@@ -33,11 +33,19 @@
 			var outline = vis.add(pv.Panel)
 				.strokeStyle("#000");
 			
+			// add the overall title
+			var title_main = vis.add(pv.Bar)
+				.height(2*p)
+				.fillStyle("none")
+			  .anchor("center").add(pv.Label)
+				.font("20px sans-serif")
+				.text(mmr_estimates[0].country_name + " - Maternal Mortality Estimates");
+			
 			// MMR panel
 			var panel_mmr = vis.add(pv.Panel)
-				.top(p)
+				.top(2*p)
 				.left(p)
-				.height((h-p*3)-(h-p*5)*(1/4))
+				.height((h-p*4)-(h-p*6)*(1/4))
 				.width((w-p*3)-(w-p*5)*(1/4))
 				.strokeStyle("#aaa");
 			
@@ -74,9 +82,9 @@
 			// create and frame each subplot
 			var cell = vis.add(pv.Panel)
 				.data(age_subplots)
-				.top(function(a) a.iy*p + (a.iy-1)*((h-p*5)*(1/4)))
+				.top(function(a) a.iy*p + p + (a.iy-1)*((h-p*6)*(1/4)))
 				.left(function(a) a.ix*p + (a.ix-1)*((w-p*5)*(1/4)))
-				.height((h-p*5)*(1/4))
+				.height((h-p*6)*(1/4))
 				.width((w-p*5)*(1/4))
 				.strokeStyle("#aaa");
 			
