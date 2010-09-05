@@ -14,6 +14,11 @@
 	<body>
 		<script type="text/javascript+protovis">
 		
+			// nest the data
+			var data_by_type = pv.nest(mmr_studies)
+				.key(function(d) d.type)
+				.entries();
+			
 			// overall size
 			var h = 600,
 				w = 1000,
@@ -32,12 +37,19 @@
 			var panel_mmr = vis.add(pv.Panel)
 				.top(p)
 				.left(p)
-				.height((h-p*2)-(h-p*4)*(1/4))
-				.width((w-p*2)-(w-p*4)*(1/4));
-			
-			// MMR frame
-			var plot_mmr = panel_mmr.add(pv.Panel)
+				.height((h-p*3)-(h-p*5)*(1/4))
+				.width((w-p*3)-(w-p*5)*(1/4))
 				.strokeStyle("#aaa");
+			
+			// add year labels to MMR plot
+			var xaxis_mmr = pv.Scale.linear(1980, 2010).range(0, (w-p*3)-(w-p*5)*(1/4));
+				xtick_mmr = panel_mmr.add(pv.Rule)
+					.data(pv.range(1980, 2011, 5))
+					.left(xaxis_mmr)
+					.bottom(0)
+					.strokeStyle(function(d) d ? "#eee" : "#000")
+				  .anchor("bottom").add(pv.Label)
+					.text(xaxis_mmr.tickFormat);
 			
 			// establish the indexing locations for each age subplot
 			var age_subplots = [
@@ -53,12 +65,21 @@
 			// create and frame each subplot
 			var cell = vis.add(pv.Panel)
 				.data(age_subplots)
-				.top(function(d) d.iy*p + (d.iy-1)*((h-p*4)*(1/4)))
-				.left(function(d) d.ix*p + (d.ix-1)*((w-p*4)*(1/4)))
-				.height((h-p*4)*(1/4))
-				.width((w-p*4)*(1/4))
-			  .add(pv.Panel)
+				.top(function(a) a.iy*p + (a.iy-1)*((h-p*5)*(1/4)))
+				.left(function(a) a.ix*p + (a.ix-1)*((w-p*5)*(1/4)))
+				.height((h-p*5)*(1/4))
+				.width((w-p*5)*(1/4))
 				.strokeStyle("#aaa");
+			
+			// add x axes to each subplot
+			var xaxis_age = pv.Scale.linear(1980, 2010).range(0, (w-p*5)*(1/4)),
+				xtick_age = cell.add(pv.Rule)
+				.data(pv.range(1980, 2011, 10))
+				.left(xaxis_age)
+				.bottom(0)
+				.strokeStyle(function(d) d ? "#eee" : "#000")
+			  .anchor("bottom").add(pv.Label)
+				.text(xaxis_age.tickFormat);
 		
 		
 		
