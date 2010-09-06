@@ -126,9 +126,11 @@
 				.event('click', function() this.clicked(this.index).parent)
 				.fillStyle(function() this.active() ? 'none' : 'rgb(189,229,138)')
 				.size(function() this.active() ? 15 : 45)
-			  .anchor('bottom').add(pv.Label)
+			  .anchor('top').add(pv.Label)
 				.visible(function() this.anchorTarget().active()==this.index)
-				.text(function(d) this.anchorTarget().clicked()==this.index ? (d.year + ' ' + d.source_type) : d.observed.toFixed(1));
+				.text(function(d) this.anchorTarget().clicked()==this.index ? (d.year + ' ' + d.source_type + ', Sample: ' + d.sample_size.toFixed()) : d.observed.toFixed(1))
+				.textMargin(function() this.anchorTarget().clicked()==this.index ? 10 : 3)
+				.font(function() this.anchorTarget().clicked()==this.index ? '20px sans-serif' : '10px sans-serif');
 
 			// establish the indexing locations for each age subplot
 			var age_subplots = [
