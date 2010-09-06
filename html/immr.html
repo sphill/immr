@@ -62,7 +62,7 @@
 				.strokeStyle("#aaa");
 			
 			// add year labels to MMR plot
-			var xaxis_mmr = pv.Scale.linear(1980, 2010).range(0, (w-p*3)-(w-p*5)*(1/4));
+			var xaxis_mmr = pv.Scale.linear(1979, 2011).range(0, (w-p*3)-(w-p*5)*(1/4));
 				xtick_mmr = panel_mmr.add(pv.Rule)
 					.data(pv.range(1980, 2011, 5))
 					.left(xaxis_mmr)
@@ -117,7 +117,7 @@
 				.event("point", function() this.active(this.index).parent)
 				.event("unpoint", function() this.active(-1).parent)
 				.fillStyle(function() this.active() ? "none" : "rgb(189,229,138)")
-				.size(function() this.active() ? 10 : 25)
+				.size(function() this.active() ? 10 : 30)
 			  .anchor("bottom").add(pv.Label)
 				.visible(function() this.anchorTarget().active()==this.index)
 				.text(function(d) d.observed.toFixed(3));
@@ -149,7 +149,7 @@
 				.strokeStyle("#aaa");
 			
 			// add x axes to each subplot
-			var xaxis_age = pv.Scale.linear(1980, 2010).range(0, (w-p*5)*(1/4)),
+			var xaxis_age = pv.Scale.linear(1979, 2011).range(0, (w-p*5)*(1/4)),
 				xtick_age = cell.add(pv.Rule)
 				.data(pv.range(1980, 2011, 10))
 				.left(xaxis_age)
