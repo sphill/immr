@@ -139,7 +139,7 @@
 				{age: 35, ix: 4, iy: 3},
 				{age: 40, ix: 4, iy: 2},
 				{age: 45, ix: 4, iy: 1}
-			]
+			];
 			
 			// loop through each age group
 				// note: I had some issues getting this to work the object-oriented way, but I'll save that for another day
@@ -156,7 +156,7 @@
 			// add y axes for each age group
 				var yaxis_age = pv.Scale
 					.linear(0, 1.05*pv.max(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.upper).concat(obs_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.observed))))
-					.range(0, (h-p*4)-(h-p*6)*(1/4)),
+					.range(0, (h-p*6)*(1/4)),
 					yticks_age = pv.Scale	// I don't know why I need to use a different range for ticks vs the axis...
 					.linear(0, 1.05*pv.max(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.upper).concat(obs_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.observed))))
 					.range(-(h-p*6)*(1/4), (h-p*6)*(1/4)),
@@ -191,6 +191,23 @@
 				  .anchor("center").add(pv.Label)
 					.text("Age " + age_subplots[a].age + " Deaths");
 			
+			// plot the observations on each subplot
+				var dots_age = cell_age.add(pv.Panel)
+					.data(obs_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values);
+				dots_age.add(pv.Dot)
+					.def("active", -1)
+					.left(function(d) xaxis_age(d.year))
+					.bottom(function(d) yaxis_age(d.observed))
+					.strokeStyle("black")
+					.events("all")
+					.event("point", function() this.active(this.index).parent)
+					.event("unpoint", function() this.active(-1).parent)
+					.fillStyle(function() this.active() ? "none" : "rgb(189,229,138)")
+					.size(function() this.active() ? 5 : 15)
+				  .anchor("bottom").add(pv.Label)
+					.visible(function() this.anchorTarget().active()==this.index)
+					.text(function(d) d.observed.toFixed(0));
+				
 			}
 			
 			
