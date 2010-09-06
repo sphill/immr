@@ -2,9 +2,6 @@
 	<head>
 		<title>iMMR</title>
 		<script type="text/javascript" src="../protovis/protovis-r3.2.js"></script>
-		<script type="text/javascript" src="../jquery/jquery-1.4.2.min.js"></script>
-		<script type="text/javascript" src="../jquery/jquery.tipsy.js"></script>
-		<script type="text/javascript" src="../jquery/protovis.tipsy.integration.js"></script>
 		<script type="text/javascript" src="../data/mmr_estimates.js"></script>
 		<script type="text/javascript" src="../data/mmr_studies.js"></script>
 		<style type="text/css">
@@ -34,8 +31,8 @@
 			var vis = new pv.Panel()
 				.width(w)
 				.height(h)
-				.events("all")
-				.event("mousemove", pv.Behavior.point());
+				.events('all')
+				.event('mousemove', pv.Behavior.point());
 			
 			// add the iCod logo
 			var logo = vis.add(pv.Panel)
@@ -44,17 +41,17 @@
 				.right((w-p*5)*(1/4)*(1/2)+p-68*.5)
 				.top((2*p-12)/2-(.5*20))
 			  .add(pv.Image)
-				.url("icod.png");
+				.url('icod.png');
 			
 			// add the overall title
 			var title_main = vis.add(pv.Bar)
 				.height(2*p-12)
 				.width((w-p*3)-(w-p*5)*(1/4))
 				.left(p)
-				.fillStyle("none")
-			  .anchor("center").add(pv.Label)
-				.font("20px sans-serif")
-				.text(mmr_estimates[0].country_name + " - Maternal Mortality Estimates");
+				.fillStyle('none')
+			  .anchor('center').add(pv.Label)
+				.font('20px sans-serif')
+				.text(mmr_estimates[0].country_name + ' - Maternal Mortality Estimates');
 			
 			// MMR panel
 			var panel_mmr = vis.add(pv.Panel)
@@ -62,7 +59,7 @@
 				.left(p)
 				.height((h-p*4)-(h-p*6)*(1/4))
 				.width((w-p*3)-(w-p*5)*(1/4))
-				.strokeStyle("#aaa");
+				.strokeStyle('#aaa');
 			
 			// add year labels to MMR plot
 			var xaxis_mmr = pv.Scale.linear(1979, 2010).range(0, (w-p*3)-(w-p*5)*(1/4));
@@ -70,18 +67,18 @@
 					.data(pv.range(1980, 2011, 5))
 					.left(xaxis_mmr)
 					.bottom(-3)
-					.strokeStyle(function(d) d ? "#eee" : "#000")
-				  .anchor("bottom").add(pv.Label)
+					.strokeStyle(function(d) d ? '#eee' : '#000')
+				  .anchor('bottom').add(pv.Label)
 					.text(xaxis_mmr.tickFormat);
 			
 			// add a title to the MMR plot
 			var title_mmr = panel_mmr.add(pv.Bar)
 				.height(12)
 				.top(-12)
-				.fillStyle("pink")
-				.strokeStyle("#aaa")
-			  .anchor("center").add(pv.Label)
-				.text("Maternal Mortality Rate per 100,000 live births");
+				.fillStyle('pink')
+				.strokeStyle('#aaa')
+			  .anchor('center').add(pv.Label)
+				.text('Maternal Mortality Rate per 100,000 live births');
 
 			// add a y axis to the MMR plot
 			var yaxis_mmr = pv.Scale
@@ -94,8 +91,8 @@
 					.data(yticks_mmr.ticks(10))
 					.bottom(yticks_mmr)
 					.left(-1)
-					.strokeStyle("none")
-				  .anchor("left").add(pv.Label)
+					.strokeStyle('none')
+				  .anchor('left').add(pv.Label)
 					.text(yticks_mmr.tickFormat);
 		
 			// add area to MMR plot
@@ -104,32 +101,34 @@
 				.bottom(function(d) yaxis_mmr(d.lower))
 				.height(function(d) yaxis_mmr(d.upper - d.lower))
 				.left(function(d) xaxis_mmr(d.year))
-				.interpolate("basis")
-				.fillStyle("pink")
-				.strokeStyle("none")
+				.interpolate('basis')
+				.fillStyle('pink')
+				.strokeStyle('none')
 				.segmented(1)
 			  .add(pv.Line)
 				.data(est_by_type.filter(function(d) d.key=='mmr')[0].values)
 				.bottom(function(d) yaxis_mmr(d.mean))
 				.left(function(d) xaxis_mmr(d.year))
-				.strokeStyle("rgb(52,150,37)");
+				.strokeStyle('rgb(52,150,37)');
 				
 			// add dots to MMR plot
 			var dots_mmr = panel_mmr.add(pv.Panel)
 				.data(obs_by_type.filter(function(d) d.key=='mmr')[0].values);
 			dots_mmr.add(pv.Dot)
-				.def("active", -1)
+				.def('active', -1)
+				.def('clicked', -1)
 				.left(function(d) xaxis_mmr(d.year))
 				.bottom(function(d) yaxis_mmr(d.observed))
-				.strokeStyle("black")
-				.events("all")
-				.event("point", function() this.active(this.index).parent)
-				.event("unpoint", function() this.active(-1).parent)
-				.fillStyle(function() this.active() ? "none" : "rgb(189,229,138)")
+				.strokeStyle('black')
+				.events('all')
+				.event('point', function() this.active(this.index).parent)
+				.event('unpoint', function() this.active(-1).clicked(-1).parent)
+				.event('click', function() this.clicked(this.index).parent)
+				.fillStyle(function() this.active() ? 'none' : 'rgb(189,229,138)')
 				.size(function() this.active() ? 15 : 45)
-			  .anchor("bottom").add(pv.Label)
+			  .anchor('bottom').add(pv.Label)
 				.visible(function() this.anchorTarget().active()==this.index)
-				.text(function(d) d.observed.toFixed(1));
+				.text(function(d) this.anchorTarget().clicked()==this.index ? (d.year + ' ' + d.source_type) : d.observed.toFixed(1));
 
 			// establish the indexing locations for each age subplot
 			var age_subplots = [
@@ -150,7 +149,7 @@
 				var cell_age = vis.add(pv.Panel)
 					.top(age_subplots[a].iy*p + p + (age_subplots[a].iy-1)*((h-p*6)*(1/4)))
 					.left(age_subplots[a].ix*p + (age_subplots[a].ix-1)*((w-p*5)*(1/4)))
-					.strokeStyle("#aaa")
+					.strokeStyle('#aaa')
 					.height((h-p*6)*(1/4))
 					.width((w-p*5)*(1/4));
 				
@@ -158,10 +157,10 @@
 				var title_age = cell_age.add(pv.Bar)
 					.height(12)
 					.top(-12)
-					.fillStyle("pink")
-					.strokeStyle("#aaa")
-				  .anchor("center").add(pv.Label)
-					.text("Age " + age_subplots[a].age + "-" + (age_subplots[a].age+4) + " Deaths");
+					.fillStyle('pink')
+					.strokeStyle('#aaa')
+				  .anchor('center').add(pv.Label)
+					.text('Age ' + age_subplots[a].age + '-' + (age_subplots[a].age+4) + ' Deaths');
 
 			// add x axes for each age group
 				var xaxis_age = pv.Scale
@@ -171,10 +170,10 @@
 					.data(pv.range(1980, 2011, 10))
 					.left(xaxis_age)
 					.bottom(0)
-					.strokeStyle(function(d) d ? "#eee" : "#000")
-				  .anchor("bottom").add(pv.Label)
+					.strokeStyle(function(d) d ? '#eee' : '#000')
+				  .anchor('bottom').add(pv.Label)
 					.text(xaxis_age.tickFormat)
-					.font("8px sans-serif");
+					.font('8px sans-serif');
 			
 			// add y axes for each age group
 				eval("var yaxis_"+age_subplots[a].age+"= pv.Scale.linear(0, 1.05*pv.max(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.upper).concat(obs_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.observed)))).range(0, (h-p*6)*(1/4))")
@@ -185,10 +184,10 @@
 					.data(yticks_age.ticks(5))
 					.bottom(yticks_age)
 					.left(-1)
-					.strokeStyle("none")
-				  .anchor("left").add(pv.Label)
+					.strokeStyle('none')
+				  .anchor('left').add(pv.Label)
 					.text(yticks_age.tickFormat)
-					.font("8px sans-serif");
+					.font('8px sans-serif');
 			
 			// plot the predictions on each subplot
 				eval("var area_mmr = cell_age.add(pv.Area).data(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values).bottom(function(d) yaxis_"+age_subplots[a].age+"(d.lower)).height(function(d) yaxis_"+age_subplots[a].age+"(d.upper - d.lower)).left(function(d) xaxis_age(d.year)).interpolate('basis').fillStyle('pink').strokeStyle('none').segmented(1).add(pv.Line).data(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values).bottom(function(d) yaxis_"+age_subplots[a].age+"(d.mean)).left(function(d) xaxis_age(d.year)).strokeStyle('rgb(52,150,37)')")		
