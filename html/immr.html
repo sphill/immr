@@ -93,7 +93,7 @@
 					ylab_mmr = panel_mmr.add(pv.Rule)
 					.data(yticks_mmr.ticks(10))
 					.bottom(yticks_mmr)
-					.left(-5)
+					.left(-1)
 					.strokeStyle("none")
 				  .anchor("left").add(pv.Label)
 					.text(yticks_mmr.tickFormat);
@@ -140,7 +140,72 @@
 				{age: 40, ix: 4, iy: 2},
 				{age: 45, ix: 4, iy: 1}
 			]
+			
+			// loop through each age group
+				// note: I had some issues getting this to work the object-oriented way, but I'll save that for another day
+			for (a in age_subplots) {
+			
+			// add panel for each age group
+				var cell_age = vis.add(pv.Panel)
+					.top(age_subplots[a].iy*p + p + (age_subplots[a].iy-1)*((h-p*6)*(1/4)))
+					.left(age_subplots[a].ix*p + (age_subplots[a].ix-1)*((w-p*5)*(1/4)))
+					.strokeStyle("#aaa")
+					.height((h-p*6)*(1/4))
+					.width((w-p*5)*(1/4));
+			
+			// add y axes for each age group
+				var yaxis_age = pv.Scale
+					.linear(0, 1.05*pv.max(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.upper).concat(obs_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.observed))))
+					.range(0, (h-p*4)-(h-p*6)*(1/4)),
+					yticks_age = pv.Scale	// I don't know why I need to use a different range for ticks vs the axis...
+					.linear(0, 1.05*pv.max(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.upper).concat(obs_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values.map(function(d) d.observed))))
+					.range(-(h-p*6)*(1/4), (h-p*6)*(1/4)),
+					ylab_age = cell_age.add(pv.Rule)
+					.data(yticks_age.ticks(5))
+					.bottom(yticks_age)
+					.left(-1)
+					.strokeStyle("none")
+				  .anchor("left").add(pv.Label)
+					.text(yticks_age.tickFormat)
+					.font("8px sans-serif");
+			
+			// add x axes for each age group
+				var xaxis_age = pv.Scale
+					.linear(1979, 2010)
+					.range(0, (w-p*5)*(1/4))
+					xticks_age = cell_age.add(pv.Rule)
+					.data(pv.range(1980, 2011, 10))
+					.left(xaxis_age)
+					.bottom(0)
+					.strokeStyle(function(d) d ? "#eee" : "#000")
+				  .anchor("bottom").add(pv.Label)
+					.text(xaxis_age.tickFormat)
+					.font("8px sans-serif");
+			
+			// add titles for each subplot
+				var title_age = cell_age.add(pv.Bar)
+					.height(12)
+					.top(-12)
+					.fillStyle("pink")
+					.strokeStyle("#aaa")
+				  .anchor("center").add(pv.Label)
+					.text("Age " + age_subplots[a].age + " Deaths");
+			
+			}
+			
+			
+/*			
 
+			// add x axes to each subplot
+			var xaxis_age = pv.Scale.linear(1979, 2010).range(0, (w-p*5)*(1/4)),
+				xtick_age = cell.add(pv.Rule)
+				.data(pv.range(1980, 2011, 10))
+				.left(xaxis_age)
+				.bottom(0)
+				.strokeStyle(function(d) d ? "#eee" : "#000")
+			  .anchor("bottom").add(pv.Label)
+				.text(xaxis_age.tickFormat);
+		
 			// create and frame each subplot
 			var cell = vis.add(pv.Panel)
 				.data(age_subplots)
@@ -161,7 +226,7 @@
 				.key(function(d) d.type)
 				.rollup(function(v) pv.max(v, function(d) d.observed == undefined ? d.upper : d.observed));
 
-			/*	
+
 			// add y axes to each subplot
 			var ytick_age = cell.add(pv.Rule)
 				.def("a", function(a) this.x = a.age.toString())
@@ -183,18 +248,7 @@
 				.range(0, (w-p*5)*(1/4))(c));
 			xtick.anchor("bottom").add(pv.Label)
 				.text("5")
-				*/
 				
-			// add x axes to each subplot
-			var xaxis_age = pv.Scale.linear(1979, 2010).range(0, (w-p*5)*(1/4)),
-				xtick_age = cell.add(pv.Rule)
-				.data(pv.range(1980, 2011, 10))
-				.left(xaxis_age)
-				.bottom(0)
-				.strokeStyle(function(d) d ? "#eee" : "#000")
-			  .anchor("bottom").add(pv.Label)
-				.text(xaxis_age.tickFormat);
-		
 			// add titles to each subplot
 			var title_age = cell.add(pv.Bar)
 				.height(12)
@@ -205,6 +259,7 @@
 				.text(function(d) "Age " + d.age + " Deaths");
 			
 			
+				*/
 			
 			
 			// add y axes to each subplot
