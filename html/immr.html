@@ -128,7 +128,7 @@
 				.size(function() this.active() ? 10 : 30)
 			  .anchor("bottom").add(pv.Label)
 				.visible(function() this.anchorTarget().active()==this.index)
-				.text(function(d) d.observed.toFixed(3));
+				.text(function(d) d.observed.toFixed(2));
 
 			// establish the indexing locations for each age subplot
 			var age_subplots = [
@@ -189,9 +189,8 @@
 					.text(yticks_age.tickFormat)
 					.font("8px sans-serif");
 			
-			
-			
-			
+			// plot the predictions on each subplot
+				eval("var area_mmr = cell_age.add(pv.Area).data(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values).bottom(function(d) yaxis_"+age_subplots[a].age+"(d.lower)).height(function(d) yaxis_"+age_subplots[a].age+"(d.upper - d.lower)).left(function(d) xaxis_age(d.year)).interpolate('basis').fillStyle('pink').strokeStyle('none').add(pv.Line).data(est_by_type.filter(function(d) d.key=='deaths_'+age_subplots[a].age)[0].values).bottom(function(d) yaxis_"+age_subplots[a].age+"(d.mean)).left(function(d) xaxis_age(d.year)).strokeStyle('rgb(52,150,37)')")		
 			
 			// plot the observations on each subplot
 				var dots_age = cell_age.add(pv.Panel)
@@ -199,8 +198,6 @@
 				eval("dots_age.add(pv.Dot).def('active', -1).left(function(d) xaxis_age(d.year)).bottom(function(d) yaxis_"+age_subplots[a].age+"(d.observed)).strokeStyle('black').events('all').event('point', function() this.active(this.index).parent).event('unpoint', function() this.active(-1).parent).fillStyle(function() this.active() ? 'none' : 'rgb(189,229,138)').size(function() this.active() ? 5 : 15).anchor('bottom').add(pv.Label).visible(function() this.anchorTarget().active()==this.index).text(function(d) d.observed.toFixed(0))")
 				
 			}
-		
-			
 		
 			// draw it
 			vis.render();
