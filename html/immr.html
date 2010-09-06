@@ -62,9 +62,9 @@
 				.strokeStyle("#aaa");
 			
 			// add year labels to MMR plot
-			var xaxis_mmr = pv.Scale.linear(1979, 2009).range(0, (w-p*3)-(w-p*5)*(1/4));
+			var xaxis_mmr = pv.Scale.linear(1979, 2010).range(0, (w-p*3)-(w-p*5)*(1/4));
 				xtick_mmr = panel_mmr.add(pv.Rule)
-					.data(pv.range(1980, 2010, 5))
+					.data(pv.range(1980, 2011, 5))
 					.left(xaxis_mmr)
 					.bottom(-3)
 					.strokeStyle(function(d) d ? "#eee" : "#000")
@@ -79,20 +79,10 @@
 				.strokeStyle("#aaa")
 			  .anchor("center").add(pv.Label)
 				.text("Maternal Mortality Rate per 100,000 live births");
-			
-			// get the data for the MMR plot
-			var obs_mmr = obs_by_type.filter(function(d) d.key=='mmr')[0].values,
-				est_mmr = est_by_type.filter(function(d) d.key=='mmr')[0].values,
-				x_obs_mmr = obs_mmr.map(function(d) d.year),
-				y_obs_mmr = obs_mmr.map(function(d) d.observed),
-				x_est_mmr = est_mmr.map(function(d) d.year),
-				y_est_mmr_upper = est_mmr.map(function(d) d.upper),
-				y_est_mmr_lower = est_mmr.map(function(d) d.lower),
-				y_est_mmr_mean = est_mmr.map(function(d) d.mean);
 
 			// add a y axis to the MMR plot
 			var yticks_mmr = pv.Scale
-				.linear(0, 1.05*pv.max(y_est_mmr_upper.concat(y_obs_mmr)))
+				.linear(0, 1.05*pv.max(est_by_type.filter(function(d) d.key=='mmr')[0].values.map(function(d) d.upper).concat(obs_by_type.filter(function(d) d.key=='mmr')[0].values.map(function(d) d.observed))))
 				.range(-((h-p*4)-(h-p*6)*(1/4)), (h-p*4)-(h-p*6)*(1/4)),
 				ylab_mmr = panel_mmr.add(pv.Rule)
 				.data(yticks_mmr.ticks(10))
@@ -102,12 +92,12 @@
 			  .anchor("left").add(pv.Label)
 				.text(yticks_mmr.tickFormat);
 			var yaxis_mmr = pv.Scale
-				.linear(0, 1.05*pv.max(y_est_mmr_upper.concat(y_obs_mmr)))
+				.linear(0, 1.05*pv.max(est_by_type.filter(function(d) d.key=='mmr')[0].values.map(function(d) d.upper).concat(obs_by_type.filter(function(d) d.key=='mmr')[0].values.map(function(d) d.observed))))
 				.range(0, (h-p*4)-(h-p*6)*(1/4));
 		
 			// add area to MMR plot
 			area_mmr = panel_mmr.add(pv.Area)
-				.data(est_mmr)
+				.data(est_by_type.filter(function(d) d.key=='mmr')[0].values)
 				.bottom(function(d) yaxis_mmr(d.lower))
 				.height(function(d) yaxis_mmr(d.upper - d.lower))
 				.left(function(d) xaxis_mmr(d.year))
@@ -115,17 +105,14 @@
 				.fillStyle("pink")
 				.strokeStyle("none")
 			  .add(pv.Line)
-				.data(est_mmr)
+				.data(est_by_type.filter(function(d) d.key=='mmr')[0].values)
 				.bottom(function(d) yaxis_mmr(d.mean))
 				.left(function(d) xaxis_mmr(d.year))
 				.strokeStyle("rgb(52,150,37)");
 				
-				
-				
-				
 			// add dots to MMR plot
 			var dots_mmr = panel_mmr.add(pv.Panel)
-				.data(obs_mmr);
+				.data(obs_by_type.filter(function(d) d.key=='mmr')[0].values);
 			dots_mmr.add(pv.Dot)
 				.def("active", -1)
 				.left(function(d) xaxis_mmr(d.year))
