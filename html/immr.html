@@ -130,13 +130,18 @@ Matrix.prototype.transpose = function() {
 			var plot_mmr = panel_mmr.add(pv.Panel)
 				.data(obs_mmr);
 			plot_mmr.add(pv.Dot)
+				.def("active", -1)
 				.left(function(d) xaxis_mmr(d.year))
 				.bottom(function(d) yaxis_mmr(d.observed))
 				.strokeStyle("black")
 				.events("all")
-				.size(10)
-				.event("point", function() this.fillStyle("pink").size(25))
-				.event("unpoint", function() this.fillStyle("none").size(10));
+				.event("point", function() this.active(this.index).parent)
+				.event("unpoint", function() this.active(-1).parent)
+				.fillStyle(function() this.active() ? "none" : "pink")
+				.size(function() this.active() ? 10 : 25)
+			  .anchor("right").add(pv.Label)
+				.visible(function() this.anchorTarget().active()==this.index)
+				.text(function(d) d.observed.toFixed(3));
 
 			
 			
