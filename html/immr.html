@@ -62,9 +62,9 @@
 				.strokeStyle("#aaa");
 			
 			// add year labels to MMR plot
-			var xaxis_mmr = pv.Scale.linear(1979, 2011).range(0, (w-p*3)-(w-p*5)*(1/4));
+			var xaxis_mmr = pv.Scale.linear(1979, 2009).range(0, (w-p*3)-(w-p*5)*(1/4));
 				xtick_mmr = panel_mmr.add(pv.Rule)
-					.data(pv.range(1980, 2011, 5))
+					.data(pv.range(1980, 2010, 5))
 					.left(xaxis_mmr)
 					.bottom(-3)
 					.strokeStyle(function(d) d ? "#eee" : "#000")
@@ -101,14 +101,32 @@
 				.strokeStyle("none")
 			  .anchor("left").add(pv.Label)
 				.text(yticks_mmr.tickFormat);
-		
-			// add dots to MMR plot
 			var yaxis_mmr = pv.Scale
 				.linear(0, 1.05*pv.max(y_est_mmr_upper.concat(y_obs_mmr)))
 				.range(0, (h-p*4)-(h-p*6)*(1/4));
-			var plot_mmr = panel_mmr.add(pv.Panel)
+		
+			// add area to MMR plot
+			area_mmr = panel_mmr.add(pv.Area)
+				.data(est_mmr)
+				.bottom(function(d) yaxis_mmr(d.lower))
+				.height(function(d) yaxis_mmr(d.upper - d.lower))
+				.left(function(d) xaxis_mmr(d.year))
+				.interpolate("basis")
+				.fillStyle("pink")
+				.strokeStyle("none")
+			  .add(pv.Line)
+				.data(est_mmr)
+				.bottom(function(d) yaxis_mmr(d.mean))
+				.left(function(d) xaxis_mmr(d.year))
+				.strokeStyle("rgb(52,150,37)");
+				
+				
+				
+				
+			// add dots to MMR plot
+			var dots_mmr = panel_mmr.add(pv.Panel)
 				.data(obs_mmr);
-			plot_mmr.add(pv.Dot)
+			dots_mmr.add(pv.Dot)
 				.def("active", -1)
 				.left(function(d) xaxis_mmr(d.year))
 				.bottom(function(d) yaxis_mmr(d.observed))
@@ -149,7 +167,7 @@
 				.strokeStyle("#aaa");
 			
 			// add x axes to each subplot
-			var xaxis_age = pv.Scale.linear(1979, 2011).range(0, (w-p*5)*(1/4)),
+			var xaxis_age = pv.Scale.linear(1979, 2010).range(0, (w-p*5)*(1/4)),
 				xtick_age = cell.add(pv.Rule)
 				.data(pv.range(1980, 2011, 10))
 				.left(xaxis_age)
