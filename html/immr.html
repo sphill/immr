@@ -14,6 +14,34 @@
 	<body>
 		<script type="text/javascript+protovis">
 		
+		function Matrix(ary) {
+    this.mtx = ary
+    this.height = ary.length;
+    this.width = ary[0].length;
+}
+ 
+Matrix.prototype.toString = function() {
+    var s = []
+    for (var i = 0; i < this.mtx.length; i++) 
+        s.push( this.mtx[i].join(",") );
+    return s.join("\n");
+}
+ 
+// returns a new matrix
+Matrix.prototype.transpose = function() {
+    var transposed = [];
+    for (var i = 0; i < this.width; i++) {
+        transposed[i] = [];
+        for (var j = 0; j < this.height; j++) {
+            transposed[i][j] = this.mtx[j][i];
+        }
+    }
+    return new Matrix(transposed);
+}
+		
+		
+		
+		
 			// nest the data
 			var obs_by_type = pv.nest(mmr_studies)
 					.key(function(d) d.type)
@@ -30,7 +58,9 @@
 			// root panel
 			var vis = new pv.Panel()
 				.width(w)
-				.height(h);
+				.height(h)
+				.events("all")
+				.event("mousemove", pv.Behavior.point());
 			
 			// draw a frame around the main panel temporarily for placement debugging
 			var outline = vis.add(pv.Panel)
@@ -71,12 +101,6 @@
 			  .anchor("center").add(pv.Label)
 				.text("Maternal Mortality Rate per 100,000 live births");
 			
-			
-			
-			max_ys = pv.nest(mmr_estimates.concat(mmr_studies))
-				.key(function(d) d.type)
-				.rollup(function(v) pv.max(v, function(d) d.observed == undefined ? d.upper : d.observed));
-			
 			// get the data for the MMR plot
 			var obs_mmr = obs_by_type.filter(function(d) d.key=='mmr')[0].values,
 				est_mmr = est_by_type.filter(function(d) d.key=='mmr')[0].values,
@@ -86,22 +110,40 @@
 				y_est_mmr_upper = est_mmr.map(function(d) d.upper),
 				y_est_mmr_lower = est_mmr.map(function(d) d.lower),
 				y_est_mmr_mean = est_mmr.map(function(d) d.mean);
-				
-			
+
 			// add a y axis to the MMR plot
-			var yaxis_mmr = pv.Scale
-				.linear(0, pv.max(y_est_mmr_upper.concat(y_obs_mmr)))
-				.range(-((h-p*4)-(h-p*6)*(1/4)), (h-p*4)-(h-p*6)*(1/4));
-			var ytick_mmr = panel_mmr.add(pv.Rule)
-				.data(yaxis_mmr.ticks(10))
-				.bottom(yaxis_mmr)
+			var yticks_mmr = pv.Scale
+				.linear(0, 1.05*pv.max(y_est_mmr_upper.concat(y_obs_mmr)))
+				.range(-((h-p*4)-(h-p*6)*(1/4)), (h-p*4)-(h-p*6)*(1/4)),
+				ylab_mmr = panel_mmr.add(pv.Rule)
+				.data(yticks_mmr.ticks(10))
+				.bottom(yticks_mmr)
 				.left(-5)
 				.strokeStyle("none")
 			  .anchor("left").add(pv.Label)
-				.text(yaxis_mmr.tickFormat);
+				.text(yticks_mmr.tickFormat);
 		
+			// add dots to MMR plot
+			var yaxis_mmr = pv.Scale
+				.linear(0, 1.05*pv.max(y_est_mmr_upper.concat(y_obs_mmr)))
+				.range(0, (h-p*4)-(h-p*6)*(1/4));
+			var plot_mmr = panel_mmr.add(pv.Panel)
+				.data(obs_mmr);
+			plot_mmr.add(pv.Dot)
+				.left(function(d) xaxis_mmr(d.year))
+				.bottom(function(d) yaxis_mmr(d.observed))
+				.strokeStyle("black")
+				.events("all")
+				.size(10)
+				.event("point", function() this.fillStyle("pink").size(25))
+				.event("unpoint", function() this.fillStyle("none").size(10));
 
-
+			
+			
+			
+			
+			
+			
 			// establish the indexing locations for each age subplot
 			var age_subplots = [
 				{age: 15, ix: 1, iy: 4},
@@ -141,6 +183,15 @@
 			  .anchor("center").add(pv.Label)
 				.text(function(d) "Age " + d.age + " Deaths");
 			
+			max_ys = pv.nest(mmr_estimates.concat(mmr_studies))
+				.key(function(d) d.type)
+				.rollup(function(v) pv.max(v, function(d) d.observed == undefined ? d.upper : d.observed));
+			
+			// add y axes to each subplot
+			var yaxis_age = pv.dict(age_subplots, function(v)
+				pv.Scale.linear(max_ys, function(d) eval("d.deaths_"+v.age))
+				.range(0, (h-p*6)*(1/4)));
+				
 			
 
 		
