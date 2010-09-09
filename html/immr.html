@@ -1,8 +1,10 @@
 <html>
 	<head>
 		<title>iMMR</title>
+    <link type="text/css" href="css/smoothness/jquery-ui-1.8.4.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="../protovis/protovis-r3.2.js"></script>
     <script type="text/javascript" src="jquery-1.4.2.js"></script>
+    <script type="text/javascript" src="jquery-ui-1.8.4.custom.min.js"></script>
 		<script type="text/javascript" src="../data/mmr_estimates.js"></script>
 		<script type="text/javascript" src="../data/mmr_studies.js"></script>
 		<style type="text/css">
@@ -13,7 +15,22 @@
 		</style>
 	</head>
 	<body>
-  <div class="test">Test Div</div>
+  <div id="dialog-form" title="Flag an outlier">
+    <p class="validateTips">All form fields are required.</p>
+  
+    <form>
+    <fieldset>
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
+      <label for="email">Email</label>
+      <input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" />
+      <label for="comment">Comment</label>
+      <textarea name="comment" id="comment" value="" class="text ui-widget-content ui-corner-all"></textarea>
+    </fieldset>
+    </form>
+  </div>
+
+
 		<script type="text/javascript+protovis">
 		
 			// nest the data
@@ -125,7 +142,14 @@
 				.events('all')
 				.event('point', function() this.active(this.index).parent)
 				.event('unpoint', function() this.active(-1).clicked(-1).parent)
-				.event('click', function() this.clicked(this.index).parent)
+				//.event('click', function() this.clicked(this.index).parent)
+				//.event('click', function() this.clicked($(".test").toggle()))
+				//.event('click', function(d) this.clicked(alert('testing alert: '+d.study_id)))
+				//.event('click', function(d) this.clicked($('#dialog-form').dialog('open')))
+				.event('click', function(d) { 
+						$('#comment').val('year: '+d.year)
+						this.clicked($('#dialog-form').dialog('open')) 
+				})
 				.fillStyle(function() this.active() ? 'none' : 'rgb(189,229,138)')
 				.size(function() this.active() ? 15 : 45)
 			  .anchor('top').add(pv.Label)
@@ -205,6 +229,23 @@
 		
 			// draw it
 			vis.render();
+		
+			$(function(d) {
+				$("#dialog-form").dialog({
+						autoOpen: false,
+						modal: true,
+						buttons: {
+							'Create an account': function() {
+									$(this).dialog('close');
+								}
+							},
+
+
+
+						 //open: function(d) {  $('#comment').val('year: '+d.toSource()) }
+				});
+			});
+
 		
 		</script>
 	</body>
